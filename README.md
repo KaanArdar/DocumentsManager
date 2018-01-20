@@ -8,6 +8,7 @@
 - Put /news/{id}
 
 #Example Document
+
 {
   "summary": "Dokuz Eylül Üniversitesi güvenlik bilimleri fakültesi kuruyor.",
   "images": [
