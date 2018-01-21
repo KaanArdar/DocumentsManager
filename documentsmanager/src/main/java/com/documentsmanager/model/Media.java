@@ -1,5 +1,13 @@
 package com.documentsmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+/**
+ * @author Kaan
+ *
+ */
+@JsonInclude(value = Include.NON_NULL)
 public class Media {
 
 	private String baseUrl;
