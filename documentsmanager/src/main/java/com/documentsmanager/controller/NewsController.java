@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.documentsmanager.exception.ExceptionHandler;
-import com.documentsmanager.model.Document;
+import com.documentsmanager.model.DocumentBody;
 import com.documentsmanager.response.Response;
+import com.documentsmanager.service.ElasticService;
+import com.documentsmanager.service.RedisService;
 import com.documentsmanager.util.JsonUtil;
 
 @RestController
@@ -25,14 +28,23 @@ public class NewsController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 	
+	@Autowired
+	private RedisService redisService;
+	
+	@Autowired
+	private ElasticService elasticService;
+	
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
-	public ResponseEntity<String> createDocument(@RequestBody Document request) {
-		Response<Document> _response = new Response<Document>();
-		ResponseEntity<Response<Document>> response = new ResponseEntity<Response<Document>>(_response, HttpStatus.OK);
+	public ResponseEntity<String> createDocument(@RequestBody DocumentBody request) {
+		Response<DocumentBody> _response = new Response<DocumentBody>();
+		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
 		try {
-			response.getBody().setResult(request);
+			
+			
+			redisService.setValue("document"+request.getId(), request, 60);
+			response.getBody().setResult(redisService.getValue("doc"+request.getId()));
 			response.getBody().setSuccess(true);
 			
 		} catch (Exception e) {
@@ -46,9 +58,9 @@ public class NewsController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
-	public ResponseEntity<String> updateDocument(@PathVariable("id") String documentId, @RequestBody Document request) {
-		Response<Document> _response = new Response<Document>();
-		ResponseEntity<Response<Document>> response = new ResponseEntity<Response<Document>>(_response, HttpStatus.OK);
+	public ResponseEntity<String> updateDocument(@PathVariable("id") String documentId, @RequestBody DocumentBody request) {
+		Response<DocumentBody> _response = new Response<DocumentBody>();
+		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
 		try {
 			response.getBody().setResult(request);
 			response.getBody().setSuccess(true);
@@ -65,8 +77,8 @@ public class NewsController {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	public ResponseEntity<String> getDocument(@PathVariable("id") String documentId) {
-		Response<Document> _response = new Response<Document>();
-		ResponseEntity<Response<Document>> response = new ResponseEntity<Response<Document>>(_response, HttpStatus.OK);
+		Response<DocumentBody> _response = new Response<DocumentBody>();
+		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
 		try {
 			System.out.println(documentId);
 			
@@ -82,8 +94,8 @@ public class NewsController {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.APPLICATION_XML })
 	public ResponseEntity<String> deleteDocument(@PathVariable("id") String documentId) {
-		Response<Document> _response = new Response<Document>();
-		ResponseEntity<Response<Document>> response = new ResponseEntity<Response<Document>>(_response, HttpStatus.OK);
+		Response<DocumentBody> _response = new Response<DocumentBody>();
+		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
 		try {
 			System.out.println(documentId);
 			

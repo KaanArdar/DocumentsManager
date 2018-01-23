@@ -1,5 +1,6 @@
 package com.documentsmanager.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -7,8 +8,11 @@ import java.util.List;
  * @author Kaan
  *
  */
-public class Document {
+public class DocumentBody implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
+	private long id;
 	private String summary;
 	private List<Media> images;
 	private int weight;
@@ -21,7 +25,6 @@ public class Document {
 	private List<Tag> tags;
 	private String seoLink;
 	private Tag primaryTag;
-	private long id;
 	private Date publishedDate;
 	private String presentationType;
 	private String publishedDateFormatted;

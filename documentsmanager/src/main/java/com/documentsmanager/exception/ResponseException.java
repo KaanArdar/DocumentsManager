@@ -30,8 +30,7 @@ public class ResponseException extends Exception {
 		this.exceptionDescription = exceptionDescription;
 	}
 
-	public ResponseException(String exceptionCode, String exceptionDescription,
-			String developerMessage) {
+	public ResponseException(String exceptionCode, String exceptionDescription,String developerMessage) {
 		super();
 		this.exceptionCode = exceptionCode;
 		this.exceptionDescription = exceptionDescription;

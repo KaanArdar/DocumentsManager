@@ -1,11 +1,15 @@
 package com.documentsmanager.model;
 
+import java.io.Serializable;
+
 /**
  * @author Kaan
  *
  */
-public class Tag {
+public class Tag implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	private boolean isPrimary;
 	private String name;
 	private String followingType;

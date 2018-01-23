@@ -1,5 +1,7 @@
 package com.documentsmanager.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -8,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *
  */
 @JsonInclude(value = Include.NON_NULL)
-public class Media {
+public class Media implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private String baseUrl;
 	private String format;
 	private String name;
