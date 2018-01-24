@@ -14,16 +14,20 @@ public class RedisService{
 	@Autowired
 	private RedisTemplate<String, DocumentBody> template;
 
-	public void setValue(String key, DocumentBody value) {
+	public void setValue(final String key, final DocumentBody value) {
 		template.opsForValue().set(key, value);	
 	}
 
-	public void setValue(String key, DocumentBody value, long expireTime) {
+	public void setValue(final String key, final DocumentBody value, final long expireTime) {
 		template.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);		
 	}
 
-	public DocumentBody getValue(String key) {
+	public DocumentBody getValue(final String key) {
 		return template.opsForValue().get(key);
+	}
+	
+	public void remKey(final String key) {
+		template.opsForValue().getOperations().delete(key);
 	}
 
 }

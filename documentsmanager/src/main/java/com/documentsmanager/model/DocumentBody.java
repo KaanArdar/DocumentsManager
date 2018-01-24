@@ -1,35 +1,42 @@
 package com.documentsmanager.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @author Kaan
  *
  */
-public class DocumentBody implements Serializable{
+public class DocumentBody implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private long id;
 	private String summary;
 	private List<Media> images;
 	private int weight;
 	private Source source;
 	private List<Media> media;
-	private Date updatedDate;
+	private long updatedDate;
 	private String title;
 	private String url;
 	private String content;
 	private List<Tag> tags;
 	private String seoLink;
 	private Tag primaryTag;
-	private Date publishedDate;
+	private long publishedDate;
 	private String presentationType;
 	private String publishedDateFormatted;
 	private String updatedDateFormatted;
 	private int status;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getSummary() {
 		return summary;
@@ -71,11 +78,11 @@ public class DocumentBody implements Serializable{
 		this.media = media;
 	}
 
-	public Date getUpdatedDate() {
+	public long getUpdatedDate() {
 		return updatedDate;
 	}
 
-	public void setUpdatedDate(Date updatedDate) {
+	public void setUpdatedDate(long updatedDate) {
 		this.updatedDate = updatedDate;
 	}
 
@@ -127,19 +134,11 @@ public class DocumentBody implements Serializable{
 		this.primaryTag = primaryTag;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public Date getPublishedDate() {
+	public long getPublishedDate() {
 		return publishedDate;
 	}
 
-	public void setPublishedDate(Date publishedDate) {
+	public void setPublishedDate(long publishedDate) {
 		this.publishedDate = publishedDate;
 	}
 

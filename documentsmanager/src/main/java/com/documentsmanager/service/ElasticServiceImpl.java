@@ -54,11 +54,12 @@ public class ElasticServiceImpl implements ElasticService{
 			restClient.performRequest("POST","/"+index+"/"+type+"/"+documentBody.getId(),Collections.<String, String>emptyMap(),entity);
 			logger.info("ElasticServiceImpl@save successful..");
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new IOException(e.getMessage());
 		}	
 	}
 
-	public DocumentBody findId(String index, String type, long id) throws IOException {
+	public DocumentBody findId(String index, String type, String id) throws IOException {
 		Document doc = null;
 		try {
 			Response resp = restClient.performRequest("GET","/"+index+"/"+type+"/"+id,Collections.<String, String>emptyMap());
@@ -69,6 +70,26 @@ public class ElasticServiceImpl implements ElasticService{
 			throw new IOException(e.getMessage());
 		}	
 		return (doc.get_source() != null ? doc.get_source() : null);
+	}
+
+	public void delete(String index, String type, String id) throws IOException {
+		try {
+			restClient.performRequest("DELETE","/"+index+"/"+type+"/"+id,Collections.<String, String>emptyMap());
+			logger.info("ElasticServiceImpl@delete successful..");
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}	
+		
+	}
+
+	public void update(String index, String type, DocumentBody documentBody) throws IOException {
+		HttpEntity entity = new NStringEntity(JsonUtil.objectToJson(documentBody), ContentType.APPLICATION_JSON);
+		try {
+			restClient.performRequest("PUT","/"+index+"/"+type+"/"+documentBody.getId(),Collections.<String, String>emptyMap(),entity);
+			logger.info("ElasticServiceImpl@save successful..");
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}	
 	}
 
 }

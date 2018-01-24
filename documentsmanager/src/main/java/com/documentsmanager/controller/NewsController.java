@@ -1,5 +1,7 @@
 package com.documentsmanager.controller;
 
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -20,6 +22,7 @@ import com.documentsmanager.model.DocumentBody;
 import com.documentsmanager.response.Response;
 import com.documentsmanager.service.ElasticService;
 import com.documentsmanager.service.RedisService;
+import com.documentsmanager.util.DateUtil;
 import com.documentsmanager.util.JsonUtil;
 
 @RestController
@@ -41,10 +44,15 @@ public class NewsController {
 		Response<DocumentBody> _response = new Response<DocumentBody>();
 		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
 		try {
+			Date date = new Date();
 			
+			request.setPublishedDate(date.getTime());
+			request.setPublishedDateFormatted(DateUtil.timeFormater(date));
 			
-			redisService.setValue("document"+request.getId(), request, 60);
-			response.getBody().setResult(redisService.getValue("doc"+request.getId()));
+			elasticService.save("documets", "content", request);
+			redisService.setValue("document_"+request.getId(), request, 60*60);
+				
+			response.getBody().setResult(request);
 			response.getBody().setSuccess(true);
 			
 		} catch (Exception e) {
@@ -62,11 +70,20 @@ public class NewsController {
 		Response<DocumentBody> _response = new Response<DocumentBody>();
 		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
 		try {
+			Date date = new Date();
+			
+			request.setUpdatedDate(date.getTime());
+			request.setUpdatedDateFormatted(DateUtil.timeFormater(date));
+			
+			elasticService.update("documets", "content", request);
+//			redisService.setValue("document_"+documentId, request, 60*60);
+			
+			
 			response.getBody().setResult(request);
 			response.getBody().setSuccess(true);
 			
 		} catch (Exception e) {
-			logger.error("NewsController@createDocument exception : ",e);
+			logger.error("NewsController@updateDocument exception : ",e);
 			response.getBody().setSuccess(false);
 			response.getBody().setError(ExceptionHandler.errorResponse(e));
 		}
@@ -79,9 +96,17 @@ public class NewsController {
 	public ResponseEntity<String> getDocument(@PathVariable("id") String documentId) {
 		Response<DocumentBody> _response = new Response<DocumentBody>();
 		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
+		DocumentBody body = null;
 		try {
-			System.out.println(documentId);
 			
+			body = redisService.getValue("document_"+documentId);
+			if(body == null) {
+				body = elasticService.findId("documets", "content", documentId);
+			}	
+			
+			response.getBody().setResult(body);
+			response.getBody().setSuccess(true);
+				
 		} catch (Exception e) {
 			logger.error("NewsController@getDocument exception : ",e);
 			response.getBody().setSuccess(false);
@@ -96,11 +121,19 @@ public class NewsController {
 	public ResponseEntity<String> deleteDocument(@PathVariable("id") String documentId) {
 		Response<DocumentBody> _response = new Response<DocumentBody>();
 		ResponseEntity<Response<DocumentBody>> response = new ResponseEntity<Response<DocumentBody>>(_response, HttpStatus.OK);
+		DocumentBody body = null;
 		try {
-			System.out.println(documentId);
+			body = 	elasticService.findId("documets", "content", documentId);	
+			if(body != null) {
+				elasticService.delete("documets", "content", documentId);
+				redisService.remKey("document_"+documentId);
+			}
+			
+			response.getBody().setResult(body);
+			response.getBody().setSuccess(true);
 			
 		} catch (Exception e) {
-			logger.error("NewsController@getDocument exception : ",e);
+			logger.error("NewsController@deleteDocument exception : ",e);
 			response.getBody().setSuccess(false);
 			response.getBody().setError(ExceptionHandler.errorResponse(e));
 		}
