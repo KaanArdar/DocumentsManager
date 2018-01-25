@@ -102,6 +102,7 @@ public class NewsController {
 			body = redisService.getValue("document_"+documentId);
 			if(body == null) {
 				body = elasticService.findId("documets", "content", documentId);
+				redisService.setValue("document_"+body.getId(), body, 60*60);
 			}	
 			
 			response.getBody().setResult(body);
