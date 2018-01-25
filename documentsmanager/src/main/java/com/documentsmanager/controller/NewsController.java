@@ -76,7 +76,7 @@ public class NewsController {
 			request.setUpdatedDateFormatted(DateUtil.timeFormater(date));
 			
 			elasticService.update("documets", "content", request);
-//			redisService.setValue("document_"+documentId, request, 60*60);
+			redisService.setValue("document_"+documentId, request, 60*60);
 			
 			
 			response.getBody().setResult(request);
